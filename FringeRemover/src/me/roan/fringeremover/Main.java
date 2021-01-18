@@ -11,8 +11,8 @@ import javax.imageio.ImageIO;
 public class Main{
 
 	public static void main(String[] args){
-		//File test = new File("C:\\Users\\RoanH\\Downloads\\selection-mod-doubletime@2x.png");
-		File test = new File("testout.png");
+		File test = new File("C:\\Users\\RoanH\\Downloads\\selection-mod-doubletime@2x.png");
+		//File test = new File("testout.png");
 
 		
 		
@@ -30,10 +30,12 @@ public class Main{
 					values.add(alpha);
 					if(alpha == 0){
 						System.out.println("a0: " + ((argb & 0xFF0000) >> 16) + " | " + ((argb & 0xFF00) >> 8) + " | " + (argb & 0xFF));
-						copy.setRGB(x, y, 0);
+						//copy.setRGB(x, y, 0);
 					}else{
-						copy.setRGB(x, y, argb);
+						//copy.setRGB(x, y, argb);
 					}
+					
+					copy.setRGB(x, y, computeColor(x, y, img));
 				}
 			}
 			
@@ -46,12 +48,42 @@ public class Main{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private static final int computeColor(int x, int y, BufferedImage data){
+		int argb = data.getRGB(x, y);
+		if((argb & 0xFF000000) == 0){
+			int a = 0;
+			int r = 0;
+			int g = 0;
+			int b = 0;
+			
+			System.out.println("  For: " + x + " | " + y);
+			for(int dx = -1; dx <= 1; dx++){
+				for(int dy = -1; dy <= 1; dy++){
+					if(x + dx >= 0 && y + dy >= 0 && x + dx < data.getWidth() && y + dy < data.getHeight() && !(dx == 0 && dy == 0)){
+						int color = data.getRGB(x + dx, y + dy);
+						int alpha = (color & 0xFF000000) >>> 24;
+						if(alpha != 0){
+							System.out.println("  NN: " + alpha + " | " + ((color & 0xFF0000) >> 16) + " | " + ((color & 0xFF00) >> 8) + " | " + (color & 0xFF));
+							a += alpha;
+							r += ((color & 0xFF0000) >> 16) * alpha;
+							g += ((color & 0xFF00) >> 8) * alpha;
+							b += (color & 0xFF) * alpha;
+						}
+					}
+				}
+			}
+			
+			argb = 0x0;
+			if(a != 0){
+				argb |= (r / a) << 16;
+				argb |= (g / a) << 8;
+				argb |= b / a;
+				System.out.println("  Result: " + (r / a) + " | " + (g / a) + " | " + (b / a));
+			}
+		}
 		
-		
-		
-		
-		
-		
-		
+		return argb;
 	}
 }
