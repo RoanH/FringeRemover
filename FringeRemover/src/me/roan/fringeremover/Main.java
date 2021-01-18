@@ -11,12 +11,14 @@ import javax.imageio.ImageIO;
 public class Main{
 
 	public static void main(String[] args){
-		File test = new File("C:\\Users\\RoanH\\Downloads\\selection-mod-doubletime@2x.png");
-		
+		//File test = new File("C:\\Users\\RoanH\\Downloads\\selection-mod-doubletime@2x.png");
+		File test = new File("testout.png");
+
 		
 		
 		try{
 			BufferedImage img = ImageIO.read(test);
+			BufferedImage copy = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
 			
 			Set<Integer> values = new HashSet<Integer>();
 			
@@ -28,13 +30,16 @@ public class Main{
 					values.add(alpha);
 					if(alpha == 0){
 						System.out.println("a0: " + ((argb & 0xFF0000) >> 16) + " | " + ((argb & 0xFF00) >> 8) + " | " + (argb & 0xFF));
+						copy.setRGB(x, y, 0);
+					}else{
+						copy.setRGB(x, y, argb);
 					}
 				}
 			}
 			
 			values.forEach(System.out::println);
 			
-			
+			ImageIO.write(copy, "png", new File("testout.png"));
 			
 			
 		}catch(IOException e){
