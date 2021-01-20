@@ -7,13 +7,32 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+
+import me.roan.util.Dialog;
+import me.roan.util.Util;
 
 public class Main{
 	
 	public static void main(String[] args){
+		Util.installUI();
+		
+		JFrame frame = new JFrame("Fringe Remover");
+		Dialog.setDialogTitle("Fringe Remover");
+		Dialog.setParentFrame(frame);
+		//TODO set icon
 		
 		
 		
+		
+		
+		
+		
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		//TODO check size
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 	}
 
 	public static void maintest(String[] args){
