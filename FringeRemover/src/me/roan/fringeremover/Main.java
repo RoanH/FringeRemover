@@ -9,8 +9,14 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 public class Main{
-
+	
 	public static void main(String[] args){
+		
+		
+		
+	}
+
+	public static void maintest(String[] args){
 		File test = new File("C:\\Users\\RoanH\\Downloads\\selection-mod-doubletime@2x.png");
 		//File test = new File("testout.png");
 
