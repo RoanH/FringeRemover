@@ -1,5 +1,6 @@
 package me.roan.fringeremover;
 
+import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +8,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
+import me.roan.util.ClickableLink;
 import me.roan.util.Dialog;
 import me.roan.util.Util;
 
@@ -22,12 +29,53 @@ public class Main{
 		Dialog.setParentFrame(frame);
 		//TODO set icon
 		
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		
+		JPanel input = new JPanel();
+		input.setBorder(BorderFactory.createTitledBorder("Input"));
+		
+		
+		
+		JPanel output = new JPanel();
+		output.setBorder(BorderFactory.createTitledBorder("Output"));
+		
+		
+		//TODO backup same panel as output? or make a new options panel
+		
+		
+		JPanel progress = new JPanel();
+		progress.setBorder(BorderFactory.createTitledBorder("Progress"));
+		
+		
+		
+		
+		JPanel controls = new JPanel();
+		controls.setBorder(BorderFactory.createTitledBorder("Controls"));
 		
 		
 		
 		
 		
+		JPanel version = new JPanel(new GridLayout(2, 1, 0, 2));
+		version.setBorder(BorderFactory.createTitledBorder("Information"));
+		JPanel links = new JPanel(new GridLayout(1, 2, -2, 0));
+		JLabel forum = new JLabel("<html><font color=blue><u>Forums</u></font> -</html>", SwingConstants.RIGHT);
+		JLabel git = new JLabel("<html>- <font color=blue><u>GitHub</u></font></html>", SwingConstants.LEFT);
+		links.add(forum);
+		links.add(git);
+		version.add(links);
+		version.add(Util.getVersionLabel("ImageScaler", "v2.4"));//XXX the version number - don't forget build.gradle
+		//TODO forum.addMouseListener(new ClickableLink("https://osu.ppy.sh/community/forums/topics/xxxxxx"));
+		git.addMouseListener(new ClickableLink("https://github.com/RoanH/FringeRemover"));
 		
+		panel.add(input);
+		panel.add(output);
+		panel.add(progress);
+		panel.add(controls);
+		panel.add(version);
+		
+		frame.add(panel);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		//TODO check size
