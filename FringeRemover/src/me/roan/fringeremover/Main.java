@@ -22,9 +22,12 @@ import javax.swing.SwingConstants;
 
 import me.roan.util.ClickableLink;
 import me.roan.util.Dialog;
+import me.roan.util.FileSelector;
+import me.roan.util.FileSelector.FileExtension;
 import me.roan.util.Util;
 
 public class Main{
+	private static final FileExtension PNG_EXTENSION = FileSelector.registerFileExtension("PNG", "png");
 	
 	public static void main(String[] args){
 		Util.installUI();
@@ -50,6 +53,15 @@ public class Main{
 		input.add(openButtons, BorderLayout.LINE_END);
 		JCheckBox parseSubDir = new JCheckBox("Parse subdirectories", false);//TODO disable if input is file
 		input.add(parseSubDir, BorderLayout.PAGE_END);
+		
+		openFile.addActionListener(e->{
+			File selected = Dialog.showFileOpenDialog(PNG_EXTENSION);
+			if(selected != null){
+				inputField.setText(selected.getAbsolutePath());
+			}else{
+				inputField.setText(null);
+			}
+		});
 		
 		JPanel output = new JPanel(new BorderLayout());
 		output.setBorder(BorderFactory.createTitledBorder("Output"));
