@@ -1,5 +1,6 @@
 package me.roan.fringeremover;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,9 +11,13 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import me.roan.util.ClickableLink;
@@ -32,30 +37,44 @@ public class Main{
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
-		JPanel input = new JPanel();
+		JPanel input = new JPanel(new BorderLayout());
 		input.setBorder(BorderFactory.createTitledBorder("Input"));
+		input.add(new JLabel("Target: "), BorderLayout.LINE_START);
+		JTextField inputField = new JTextField();
+		input.add(inputField, BorderLayout.CENTER);
+		JPanel openButtons = new JPanel(new GridLayout(1, 2));
+		JButton openFile = new JButton("File");
+		JButton openFolder = new JButton("Folder");
+		openButtons.add(openFile);
+		openButtons.add(openFolder);
+		input.add(openButtons, BorderLayout.LINE_END);
+		JCheckBox parseSubDir = new JCheckBox("Parse subdirectories", false);//TODO disable if input is file
+		input.add(parseSubDir, BorderLayout.PAGE_END);
 		
-		
-		
-		JPanel output = new JPanel();
+		JPanel output = new JPanel(new BorderLayout());
 		output.setBorder(BorderFactory.createTitledBorder("Output"));
+		output.add(new JLabel("Target: "), BorderLayout.LINE_START);
+		JTextField outputField = new JTextField();//TODO only sync if not edited yet
+		output.add(outputField, BorderLayout.CENTER);
+		JButton saveLoc = new JButton("Select");
+		output.add(saveLoc, BorderLayout.LINE_END);
+		JCheckBox overwrite = new JCheckBox("Overwrite existing files", false);//TODO default value
+		output.add(overwrite, BorderLayout.PAGE_END);
 		
-		
-		//TODO backup same panel as output? or make a new options panel
-		
-		
-		JPanel progress = new JPanel();
+		JPanel progress = new JPanel(new BorderLayout());
 		progress.setBorder(BorderFactory.createTitledBorder("Progress"));
+		JProgressBar bar = new JProgressBar();
+		bar.setMinimum(0);
+		progress.add(bar, BorderLayout.CENTER);
+		JLabel ptext = new JLabel("Waiting...", SwingConstants.CENTER);
+		progress.add(ptext, BorderLayout.PAGE_START);
 		
-		
-		
-		
-		JPanel controls = new JPanel();
+		JPanel controls = new JPanel(new GridLayout(1, 2, 5, 0));
 		controls.setBorder(BorderFactory.createTitledBorder("Controls"));
-		
-		
-		
-		
+		JButton pause = new JButton("Pause");
+		JButton start = new JButton("Start");
+		controls.add(start);
+		controls.add(pause);
 		
 		JPanel version = new JPanel(new GridLayout(2, 1, 0, 2));
 		version.setBorder(BorderFactory.createTitledBorder("Information"));
@@ -78,7 +97,7 @@ public class Main{
 		frame.add(panel);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
-		//TODO check size
+		frame.setSize(400, panel.getPreferredSize().height + frame.getInsets().top + frame.getInsets().bottom);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
