@@ -101,45 +101,18 @@ public class Main{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
-
-	public static void maintest(String[] args){
-		File test = new File("C:\\Users\\RoanH\\Downloads\\selection-mod-doubletime@2x.png");
-		//File test = new File("testout.png");
-
+	
+	//TODO png only input
+	private static final void processImage(BufferedImage input, File output) throws IOException{
+		BufferedImage copy = new BufferedImage(input.getWidth(), input.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		
-		
-		try{
-			BufferedImage img = ImageIO.read(test);
-			BufferedImage copy = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-			
-			Set<Integer> values = new HashSet<Integer>();
-			
-			for(int x = 0; x < img.getWidth(); x++){
-				for(int y = 0; y < img.getHeight(); y++){
-					int argb = img.getRGB(x, y);
-					int alpha = (argb & 0xFF000000) >>> 24;
-					//System.out.println(alpha);
-					values.add(alpha);
-					if(alpha == 0){
-						System.out.println("a0: " + ((argb & 0xFF0000) >> 16) + " | " + ((argb & 0xFF00) >> 8) + " | " + (argb & 0xFF));
-						//copy.setRGB(x, y, 0);
-					}else{
-						//copy.setRGB(x, y, argb);
-					}
-					
-					copy.setRGB(x, y, computeColor(x, y, img));
-				}
+		for(int x = 0; x < input.getWidth(); x++){
+			for(int y = 0; y < input.getHeight(); y++){
+				copy.setRGB(x, y, computeColor(x, y, input));
 			}
-			
-			values.forEach(System.out::println);
-			
-			ImageIO.write(copy, "png", new File("testout.png"));
-			
-			
-		}catch(IOException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		
+		ImageIO.write(copy, "png", output);
 	}
 	
 	private static final int computeColor(int x, int y, BufferedImage data){
@@ -150,14 +123,12 @@ public class Main{
 			int g = 0;
 			int b = 0;
 			
-			System.out.println("  For: " + x + " | " + y);
 			for(int dx = -1; dx <= 1; dx++){
 				for(int dy = -1; dy <= 1; dy++){
 					if(x + dx >= 0 && y + dy >= 0 && x + dx < data.getWidth() && y + dy < data.getHeight() && !(dx == 0 && dy == 0)){
 						int color = data.getRGB(x + dx, y + dy);
 						int alpha = (color & 0xFF000000) >>> 24;
 						if(alpha != 0){
-							System.out.println("  NN: " + alpha + " | " + ((color & 0xFF0000) >> 16) + " | " + ((color & 0xFF00) >> 8) + " | " + (color & 0xFF));
 							a += alpha;
 							r += ((color & 0xFF0000) >> 16) * alpha;
 							g += ((color & 0xFF00) >> 8) * alpha;
@@ -172,7 +143,6 @@ public class Main{
 				argb |= (r / a) << 16;
 				argb |= (g / a) << 8;
 				argb |= b / a;
-				System.out.println("  Result: " + (r / a) + " | " + (g / a) + " | " + (b / a));
 			}
 		}
 		
