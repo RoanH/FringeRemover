@@ -63,6 +63,15 @@ public class Main{
 			}
 		});
 		
+		openFolder.addActionListener(e->{
+			File selected = Dialog.showFolderOpenDialog();
+			if(selected != null){
+				inputField.setText(selected.getAbsolutePath());
+			}else{
+				inputField.setText(null);
+			}
+		});
+		
 		JPanel output = new JPanel(new BorderLayout());
 		output.setBorder(BorderFactory.createTitledBorder("Output"));
 		output.add(new JLabel("Target: "), BorderLayout.LINE_START);
