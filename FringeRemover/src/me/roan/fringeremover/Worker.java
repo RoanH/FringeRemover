@@ -55,6 +55,19 @@ public class Worker extends Thread{
 		ImageIO.write(copy, "png", output);
 	}
 
+	/**
+	 * Computes the new color of the pixel at the given coordinates
+	 * given the current image color data. For all opaque and
+	 * semi-transparent pixels this is the current color. For all
+	 * fully transparent pixels this is the average color of the (at
+	 * most) 8 pixels directly surrounding the target pixel that are
+	 * not fully transparent. The alpha component of the new color is
+	 * kept at 0.
+	 * @param x The x coordinate of the pixel to compute.
+	 * @param y The y coordinate of the pixel to compute.
+	 * @param data The original image data.
+	 * @return The new color for the requested pixel.
+	 */
 	private static final int computeColor(int x, int y, BufferedImage data){
 		int argb = data.getRGB(x, y);
 		if((argb & 0xFF000000) == 0){
