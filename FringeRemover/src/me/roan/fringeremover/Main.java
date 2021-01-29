@@ -117,8 +117,8 @@ public class Main{
 		
 		frame.add(panel);
 		frame.pack();
-		frame.setLocationRelativeTo(null);
 		frame.setSize(400, panel.getPreferredSize().height + frame.getInsets().top + frame.getInsets().bottom);
+		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
