@@ -24,6 +24,7 @@ import me.roan.util.ClickableLink;
 import me.roan.util.Dialog;
 import me.roan.util.FileSelector;
 import me.roan.util.FileSelector.FileExtension;
+import me.roan.util.FileTextField;
 import me.roan.util.Util;
 
 public class Main{
@@ -43,7 +44,7 @@ public class Main{
 		JPanel input = new JPanel(new BorderLayout());
 		input.setBorder(BorderFactory.createTitledBorder("Input"));
 		input.add(new JLabel("Target: "), BorderLayout.LINE_START);
-		JTextField inputField = new JTextField();
+		FileTextField inputField = new FileTextField();
 		input.add(inputField, BorderLayout.CENTER);
 		JPanel openButtons = new JPanel(new GridLayout(1, 2));
 		JButton openFile = new JButton("File");
@@ -56,31 +57,33 @@ public class Main{
 		
 		openFile.addActionListener(e->{
 			File selected = Dialog.showFileOpenDialog(PNG_EXTENSION);
-			if(selected != null){
-				inputField.setText(selected.getAbsolutePath());
-			}else{
-				inputField.setText(null);
-			}
+			inputField.setText(selected == null ? null : selected.getAbsolutePath());
 		});
 		
 		openFolder.addActionListener(e->{
 			File selected = Dialog.showFolderOpenDialog();
-			if(selected != null){
-				inputField.setText(selected.getAbsolutePath());
-			}else{
-				inputField.setText(null);
-			}
+			inputField.setText(selected == null ? null : selected.getAbsolutePath());
 		});
 		
 		JPanel output = new JPanel(new BorderLayout());
 		output.setBorder(BorderFactory.createTitledBorder("Output"));
 		output.add(new JLabel("Target: "), BorderLayout.LINE_START);
-		JTextField outputField = new JTextField();//TODO only sync if not edited yet
+		FileTextField outputField = new FileTextField();
 		output.add(outputField, BorderLayout.CENTER);
 		JButton saveLoc = new JButton("Select");
 		output.add(saveLoc, BorderLayout.LINE_END);
 		JCheckBox overwrite = new JCheckBox("Overwrite existing files", false);//TODO default value
 		output.add(overwrite, BorderLayout.PAGE_END);
+		
+		//TODO only sync if not edited yet?
+		inputField.setListener(path->{
+			outputField.setText(path);
+		});
+		
+		saveLoc.addActionListener(e->{
+			File selected = Dialog.showFolderOpenDialog();
+			outputField.setText(selected == null ? null : selected.getAbsolutePath());
+		});
 		
 		JPanel progress = new JPanel(new BorderLayout());
 		progress.setBorder(BorderFactory.createTitledBorder("Progress"));
