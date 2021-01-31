@@ -37,14 +37,27 @@ public class Worker extends Thread{
 		this.overwrite = overwrite;
 	}
 	
-//	public void start(){
-//		for(File file : files){
-//			Path relative = file.toPath().relativize(inpu);
-//			
-//			
+	public static void main(String[] args){
+		try{
+			Worker worker = new Worker(Paths.get("C:\\Users\\roanh\\Pictures\\Rewrite"), Paths.get("C:\\Users\\roanh\\Downloads\\test"), false, false);
+			worker.start();
+		}catch(IOException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void run(){
+		for(Path file : files){
+			Path relative = file.relativize(outputDir);
+			System.out.println("in: " + file);
+			System.out.println("rel: " + relative);
+			System.out.println("res: " + relative.resolve(outputDir));
+			
 //			relative.resolve(relative)
-//		}
-//	}
+		}
+	}
 
 	private static final void processImage(BufferedImage input, File output) throws IOException{
 		BufferedImage copy = new BufferedImage(input.getWidth(), input.getHeight(), BufferedImage.TYPE_INT_ARGB);
