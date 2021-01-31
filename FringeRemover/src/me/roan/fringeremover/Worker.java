@@ -3,6 +3,12 @@ package me.roan.fringeremover;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -10,38 +16,35 @@ import java.util.Locale;
 import javax.imageio.ImageIO;
 
 public class Worker extends Thread{
-	private File inputDir;
-	private File outputDir;
+	private static final PathMatcher PNG_PATTERN = FileSystems.getDefault().getPathMatcher("glob:*.png");
+	private Path inputDir;
+	private Path outputDir;
 	private boolean overwrite;
-	private List<File> files = new ArrayList<File>();
+	private List<Path> files = new ArrayList<Path>();
 
 	
 	//TODO make sure input file is png
-	public Worker(File input, File output, boolean subdirs, boolean overwrite){
-		if(input.isFile()){
-			inputDir = input.getParentFile();
+	public Worker(Path input, Path output, boolean subdirs, boolean overwrite) throws IOException{
+		if(Files.isRegularFile(input, LinkOption.NOFOLLOW_LINKS)){
+			inputDir = input.getParent();
 		}else{
 			inputDir = input;
-			findImages(input, subdirs);
+			Files.find(input, subdirs ? Integer.MAX_VALUE : 1, (path, attr)->{
+				return attr.isRegularFile() && PNG_PATTERN.matches(path.getFileName());
+			}).forEach(files::add);
 		}
 		outputDir = output;
 		this.overwrite = overwrite;
 	}
 	
-	
-	
-	
-	
-	
-	private final void findImages(File input, boolean subdirs){
-		for(File file : input.listFiles()){
-			if(file.isDirectory() && subdirs){
-				findImages(file, true);
-			}else if(file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".png")){
-				files.add(file);
-			}
-		}
-	}
+//	public void start(){
+//		for(File file : files){
+//			Path relative = file.toPath().relativize(inpu);
+//			
+//			
+//			relative.resolve(relative)
+//		}
+//	}
 
 	private static final void processImage(BufferedImage input, File output) throws IOException{
 		BufferedImage copy = new BufferedImage(input.getWidth(), input.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -100,5 +103,10 @@ public class Worker extends Thread{
 		}
 
 		return argb;
+	}
+	
+	public static abstract interface ProgressListener{
+		public abstract void progress(int done);
+		public abstract void done();
 	}
 }
