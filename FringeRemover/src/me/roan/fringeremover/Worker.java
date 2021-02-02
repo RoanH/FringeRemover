@@ -39,7 +39,7 @@ public class Worker extends Thread{
 	
 	public static void main(String[] args){
 		try{
-			Worker worker = new Worker(Paths.get("C:\\Users\\roanh\\Pictures\\Rewrite"), Paths.get("C:\\Users\\roanh\\Downloads\\test"), false, false);
+			Worker worker = new Worker(Paths.get("C:\\Users\\roanh\\Pictures\\Mahjong"), Paths.get("C:\\Users\\roanh\\Downloads\\test"), true, false);
 			worker.start();
 		}catch(IOException e){
 			// TODO Auto-generated catch block
@@ -50,10 +50,10 @@ public class Worker extends Thread{
 	@Override
 	public void run(){
 		for(Path file : files){
-			Path relative = file.relativize(outputDir);
+			Path relative = inputDir.relativize(file);
 			System.out.println("in: " + file);
 			System.out.println("rel: " + relative);
-			System.out.println("res: " + relative.resolve(outputDir));
+			System.out.println("res: " + outputDir.resolve(relative));
 			
 //			relative.resolve(relative)
 		}
