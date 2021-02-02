@@ -27,6 +27,7 @@ public class Worker extends Thread{
 	public Worker(Path input, Path output, boolean subdirs, boolean overwrite) throws IOException{
 		if(Files.isRegularFile(input, LinkOption.NOFOLLOW_LINKS)){
 			inputDir = input.getParent();
+			files.add(input);
 		}else{
 			inputDir = input;
 			Files.find(input, subdirs ? Integer.MAX_VALUE : 1, (path, attr)->{
