@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,6 +38,15 @@ public class Main{
 		Dialog.setDialogTitle("Fringe Remover");
 		Dialog.setParentFrame(frame);
 		//TODO set icon
+		try{
+			frame.setIconImages(Arrays.asList(
+				ImageIO.read(new File("C:\\Users\\RoanH\\Downloads\\Downloads\\text_shapes64.png")),
+				ImageIO.read(new File("C:\\Users\\RoanH\\Downloads\\Downloads\\text_shapes24simple.png"))
+			));
+		}catch(IOException e1){
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -99,6 +109,8 @@ public class Main{
 		JButton start = new JButton("Start");
 		controls.add(start);
 		controls.add(pause);
+		
+		
 		
 		JPanel version = new JPanel(new GridLayout(2, 1, 0, 2));
 		version.setBorder(BorderFactory.createTitledBorder("Information"));

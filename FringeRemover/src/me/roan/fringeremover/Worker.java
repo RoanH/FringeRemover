@@ -8,10 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.imageio.ImageIO;
 
@@ -21,13 +19,14 @@ public class Worker extends Thread{
 	private Path outputDir;
 	private boolean overwrite;
 	private List<Path> files = new ArrayList<Path>();
-
+	private ProgressListener listener;
 	
-	//TODO make sure input file is png
-	public Worker(Path input, Path output, boolean subdirs, boolean overwrite) throws IOException{
+	public Worker(Path input, Path output, boolean subdirs, boolean overwrite, ProgressListener listener) throws IOException{
 		if(Files.isRegularFile(input, LinkOption.NOFOLLOW_LINKS)){
 			inputDir = input.getParent();
-			files.add(input);
+			if(PNG_PATTERN.matches(input.getFileName())){
+				files.add(input);
+			}
 		}else{
 			inputDir = input;
 			Files.find(input, subdirs ? Integer.MAX_VALUE : 1, (path, attr)->{
@@ -36,28 +35,26 @@ public class Worker extends Thread{
 		}
 		outputDir = output;
 		this.overwrite = overwrite;
-	}
-	
-	public static void main(String[] args){
-		try{
-			Worker worker = new Worker(Paths.get("C:\\Users\\roanh\\Pictures\\Mahjong"), Paths.get("C:\\Users\\roanh\\Downloads\\test"), true, false);
-			worker.start();
-		}catch(IOException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.listener = listener;
 	}
 	
 	@Override
 	public void run(){
-		for(Path file : files){
-			Path relative = inputDir.relativize(file);
-			System.out.println("in: " + file);
-			System.out.println("rel: " + relative);
-			System.out.println("res: " + outputDir.resolve(relative));
-			
-//			relative.resolve(relative)
+		for(int i = 0; i < files.size(); i++){
+			Path file = files.get(i);
+			Path target =  outputDir.resolve(inputDir.relativize(file));
+			if(overwrite || !Files.exists(target)){
+				try{
+					BufferedImage img = ImageIO.read(file.toFile());
+					processImage(img, target.toFile());
+					img.flush();
+					listener.progress(i);
+				}catch(IOException e){
+					listener.error(file, e);
+				}
+			}
 		}
+		listener.done();
 	}
 
 	private static final void processImage(BufferedImage input, File output) throws IOException{
@@ -70,6 +67,7 @@ public class Worker extends Thread{
 		}
 
 		ImageIO.write(copy, "png", output);
+		copy.flush();
 	}
 
 	/**
@@ -121,6 +119,7 @@ public class Worker extends Thread{
 	
 	public static abstract interface ProgressListener{
 		public abstract void progress(int done);
+		public abstract void error(Path file, Exception error);
 		public abstract void done();
 	}
 }
