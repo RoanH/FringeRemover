@@ -5,9 +5,11 @@ import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -21,6 +23,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import me.roan.fringeremover.Worker.ProgressListener;
 import me.roan.util.ClickableLink;
 import me.roan.util.Dialog;
 import me.roan.util.FileSelector;
@@ -30,6 +33,7 @@ import me.roan.util.Util;
 
 public class Main{
 	private static final FileExtension PNG_EXTENSION = FileSelector.registerFileExtension("PNG", "png");
+	private static Worker worker = null;
 	
 	public static void main(String[] args){
 		Util.installUI();
@@ -90,6 +94,12 @@ public class Main{
 			outputField.setText(path);
 		});
 		
+		outputField.setListener(path->{
+			if(!inputField.getText().equals(path)){
+				System.out.println("Fire");
+			}
+		});
+		
 		saveLoc.addActionListener(e->{
 			File selected = Dialog.showFolderOpenDialog();
 			outputField.setText(selected == null ? null : selected.getAbsolutePath());
@@ -110,7 +120,53 @@ public class Main{
 		controls.add(start);
 		controls.add(pause);
 		
+		Consumer<Boolean> enableFun = enabled->{
+			inputField.setEnabled(enabled);
+			outputField.setEnabled(enabled);
+			start.setEnabled(enabled);
+			pause.setEnabled(!enabled);
+			openFile.setEnabled(enabled);
+			openFolder.setEnabled(enabled);
+			saveLoc.setEnabled(enabled);
+			parseSubDir.setEnabled(enabled);
+			overwrite.setEnabled(enabled);
+		};
+		enableFun.accept(true);
 		
+		start.addActionListener(e->{
+			enableFun.accept(false);
+			
+			Path inputPath = inputField.getFile().toPath();
+			Path outputPath = outputField.getFile().toPath();
+			
+			try{
+				worker = new Worker(inputPath, outputPath, parseSubDir.isSelected(), overwrite.isSelected(), new ProgressListener(){
+
+					@Override
+					public void progress(int done){
+						bar.setValue(done);
+					}
+
+					@Override
+					public void error(Path file, Exception error){
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void done(){
+						// TODO Auto-generated method stub
+						
+					}
+				});
+				bar.setMaximum(worker.getQueueSize());
+				bar.setValue(0);
+				worker.start();
+			}catch(IOException e1){
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
 		
 		JPanel version = new JPanel(new GridLayout(2, 1, 0, 2));
 		version.setBorder(BorderFactory.createTitledBorder("Information"));

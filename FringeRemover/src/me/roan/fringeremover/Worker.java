@@ -38,6 +38,10 @@ public class Worker extends Thread{
 		this.listener = listener;
 	}
 	
+	public int getQueueSize(){
+		return files.size();
+	}
+	
 	@Override
 	public void run(){
 		for(int i = 0; i < files.size(); i++){
@@ -45,6 +49,7 @@ public class Worker extends Thread{
 			Path target =  outputDir.resolve(inputDir.relativize(file));
 			if(overwrite || !Files.exists(target)){
 				try{
+					System.out.println("process: " + file);
 					BufferedImage img = ImageIO.read(file.toFile());
 					processImage(img, target.toFile());
 					img.flush();
@@ -66,7 +71,7 @@ public class Worker extends Thread{
 			}
 		}
 
-		ImageIO.write(copy, "png", output);
+//		ImageIO.write(copy, "png", output);
 		copy.flush();
 	}
 
