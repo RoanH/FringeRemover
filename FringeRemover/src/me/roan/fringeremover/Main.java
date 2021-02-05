@@ -20,7 +20,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
 import me.roan.fringeremover.Worker.ProgressListener;
@@ -66,8 +68,6 @@ public class Main{
 		openButtons.add(openFile);
 		openButtons.add(openFolder);
 		input.add(openButtons, BorderLayout.LINE_END);
-		JCheckBox parseSubDir = new JCheckBox("Parse subdirectories", false);//TODO disable if input is file
-		input.add(parseSubDir, BorderLayout.PAGE_END);
 		
 		openFile.addActionListener(e->{
 			File selected = Dialog.showFileOpenDialog(PNG_EXTENSION);
@@ -86,8 +86,7 @@ public class Main{
 		output.add(outputField, BorderLayout.CENTER);
 		JButton saveLoc = new JButton("Select");
 		output.add(saveLoc, BorderLayout.LINE_END);
-		JCheckBox overwrite = new JCheckBox("Overwrite existing files", false);//TODO default value
-		output.add(overwrite, BorderLayout.PAGE_END);
+		
 		
 		//TODO only sync if not edited yet?
 		inputField.setListener(path->{
@@ -104,6 +103,18 @@ public class Main{
 			File selected = Dialog.showFolderOpenDialog();
 			outputField.setText(selected == null ? null : selected.getAbsolutePath());
 		});
+		
+		JPanel options = new JPanel(new GridLayout(3, 1));
+		options.setBorder(BorderFactory.createTitledBorder("Options"));
+		JCheckBox parseSubDir = new JCheckBox("Parse subdirectories", false);//TODO disable if input is file
+		options.add(parseSubDir);
+		JCheckBox overwrite = new JCheckBox("Overwrite existing files", false);//TODO default value
+		options.add(overwrite);
+		JPanel threadsPanel = new JPanel(new BorderLayout());
+		threadsPanel.add(new JLabel("Threads: "), BorderLayout.LINE_START);
+		JSpinner threadCount = new JSpinner(new SpinnerNumberModel(1, 1, 5, 1));
+		threadsPanel.add(threadCount, BorderLayout.CENTER);
+		options.add(threadsPanel);
 		
 		JPanel progress = new JPanel(new BorderLayout());
 		progress.setBorder(BorderFactory.createTitledBorder("Progress"));
@@ -188,6 +199,7 @@ public class Main{
 		
 		panel.add(input);
 		panel.add(output);
+		panel.add(options);
 		panel.add(progress);
 		panel.add(controls);
 		panel.add(version);
