@@ -112,7 +112,8 @@ public class Main{
 		options.add(overwrite);
 		JPanel threadsPanel = new JPanel(new BorderLayout());
 		threadsPanel.add(new JLabel("Threads: "), BorderLayout.LINE_START);
-		JSpinner threadCount = new JSpinner(new SpinnerNumberModel(1, 1, 5, 1));
+		int maxThreads = Runtime.getRuntime().availableProcessors();
+		JSpinner threadCount = new JSpinner(new SpinnerNumberModel(Math.min(4, maxThreads), 1, maxThreads, 1));
 		threadsPanel.add(threadCount, BorderLayout.CENTER);
 		options.add(threadsPanel);
 		
