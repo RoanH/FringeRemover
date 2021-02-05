@@ -139,8 +139,17 @@ public class Main{
 			Path inputPath = inputField.getFile().toPath();
 			Path outputPath = outputField.getFile().toPath();
 			
+			//TODO handle output being a file?
+			
+			
+			
 			try{
-				worker = new Worker(inputPath, outputPath, parseSubDir.isSelected(), overwrite.isSelected(), new ProgressListener(){
+				int total = Worker.prepare(inputPath, outputPath, parseSubDir.isSelected(), overwrite.isSelected());
+				bar.setMaximum(total);
+				bar.setValue(0);
+				
+				//TODO make threads configurable
+				Worker.start(4, new ProgressListener(){
 
 					@Override
 					public void progress(int done){
@@ -159,9 +168,6 @@ public class Main{
 						
 					}
 				});
-				bar.setMaximum(worker.getQueueSize());
-				bar.setValue(0);
-				worker.start();
 			}catch(IOException e1){
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

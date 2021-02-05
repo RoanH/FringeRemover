@@ -10,18 +10,22 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
 
-public class Worker extends Thread{
+public class Worker{
 	private static final PathMatcher PNG_PATTERN = FileSystems.getDefault().getPathMatcher("glob:*.png");
-	private Path inputDir;
-	private Path outputDir;
-	private boolean overwrite;
-	private List<Path> files = new ArrayList<Path>();
-	private ProgressListener listener;
+	private static Path inputDir;
+	private static Path outputDir;
+	private static boolean overwrite;
+	private static List<Path> files = new ArrayList<Path>();
+	private static volatile boolean running = false;
 	
-	public Worker(Path input, Path output, boolean subdirs, boolean overwrite, ProgressListener listener) throws IOException{
+	public static final int prepare(Path input, Path output, boolean subdirs, boolean overwriteFiles) throws IOException{
+		files.clear();
 		if(Files.isRegularFile(input, LinkOption.NOFOLLOW_LINKS)){
 			inputDir = input.getParent();
 			if(PNG_PATTERN.matches(input.getFileName())){
@@ -34,32 +38,57 @@ public class Worker extends Thread{
 			}).forEach(files::add);
 		}
 		outputDir = output;
-		this.overwrite = overwrite;
-		this.listener = listener;
-	}
-	
-	public int getQueueSize(){
+		overwrite = overwriteFiles;
 		return files.size();
 	}
 	
-	@Override
-	public void run(){
-		for(int i = 0; i < files.size(); i++){
-			Path file = files.get(i);
-			Path target =  outputDir.resolve(inputDir.relativize(file));
-			if(overwrite || !Files.exists(target)){
-				try{
-					System.out.println("process: " + file);
-					BufferedImage img = ImageIO.read(file.toFile());
-					processImage(img, target.toFile());
-					img.flush();
-					listener.progress(i);
-				}catch(IOException e){
-					listener.error(file, e);
+	public static final void setRunning(boolean shouldRun){
+		running = shouldRun;
+	}
+	
+	public static final void start(int threads, ProgressListener listener){
+		ExecutorService executor = Executors.newFixedThreadPool(threads);
+		AtomicInteger completed = new AtomicInteger(0);
+		running = true;
+		
+		for(Path file : files){
+			executor.submit(()->{
+				while(!running){
+					try{
+						Thread.sleep(1000);
+					}catch(InterruptedException e){
+					}
 				}
-			}
+				
+				try{
+					processFile(file);
+				}catch(Exception e){
+					synchronized(listener){
+						listener.error(file, e);
+					}
+					e.printStackTrace();
+				}finally{
+					synchronized(listener){
+						int finished = completed.incrementAndGet();
+						listener.progress(finished);
+						if(finished == files.size()){
+							listener.done();
+							executor.shutdown();
+						}
+					}
+				}
+			});
 		}
-		listener.done();
+	}
+	
+	private static final void processFile(Path file) throws IOException{
+		Path target =  outputDir.resolve(inputDir.relativize(file));
+		if(overwrite || !Files.exists(target)){
+			System.out.println("process: " + file);
+			BufferedImage img = ImageIO.read(file.toFile());
+			processImage(img, target.toFile());
+			img.flush();
+		}
 	}
 
 	private static final void processImage(BufferedImage input, File output) throws IOException{
