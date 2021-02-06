@@ -3,6 +3,7 @@ package me.roan.fringeremover;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -86,8 +87,11 @@ public class Worker{
 		if(overwrite || !Files.exists(target)){
 			System.out.println("process: " + file);
 			BufferedImage img = ImageIO.read(file.toFile());
+			Files.createDirectories(target);
 			processImage(img, target.toFile());
 			img.flush();
+		}else{
+			throw new IllegalArgumentException("File already exists and overwrite not enabled.");
 		}
 	}
 
@@ -100,7 +104,7 @@ public class Worker{
 			}
 		}
 
-//		ImageIO.write(copy, "png", output);
+		ImageIO.write(copy, "png", output);
 		copy.flush();
 	}
 

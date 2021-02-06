@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
@@ -16,8 +18,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
@@ -97,12 +101,6 @@ public class Main{
 			outputField.setText(path);
 		});
 		
-		outputField.setListener(path->{
-			if(!inputField.getText().equals(path)){
-				System.out.println("Fire");
-			}
-		});
-		
 		saveFile.addActionListener(e->{
 			File selected = Dialog.showFileSaveDialog(PNG_EXTENSION, inputField.getFile().getName());
 			if(selected != null){
@@ -119,7 +117,7 @@ public class Main{
 		
 		JPanel options = new JPanel(new GridLayout(3, 1));
 		options.setBorder(BorderFactory.createTitledBorder("Options"));
-		JCheckBox parseSubDir = new JCheckBox("Parse subdirectories", false);//TODO disable if input is file
+		JCheckBox parseSubDir = new JCheckBox("Parse subdirectories", true);//TODO disable if input is file
 		options.add(parseSubDir);
 		JCheckBox overwrite = new JCheckBox("Overwrite existing files", false);//TODO default value
 		options.add(overwrite);
@@ -156,6 +154,7 @@ public class Main{
 			saveFolder.setEnabled(enabled);
 			parseSubDir.setEnabled(enabled);
 			overwrite.setEnabled(enabled);
+			threadCount.setEnabled(enabled);
 		};
 		enableFun.accept(true);
 		
@@ -166,33 +165,48 @@ public class Main{
 			Path outputPath = outputField.getFile().toPath();
 			
 			if(Files.isRegularFile(outputPath) && Files.isDirectory(inputPath)){
+				System.out.println("st");
 				Dialog.showMessageDialog("Cannot save a folder of files to a single output file.");
+				enableFun.accept(true);
 				return;
 			}
 			
 			try{
 				int total = Worker.prepare(inputPath, outputPath, parseSubDir.isSelected(), overwrite.isSelected());
+				if(total == 0){
+					ptext.setText("No files to rescale");
+					bar.setMaximum(1);
+					bar.setValue(1);
+					enableFun.accept(true);
+					return;
+				}
 				bar.setMaximum(total);
 				bar.setValue(0);
 				
-				//TODO make threads configurable
+				List<String> errors = new ArrayList<String>(0);
 				Worker.start((int)threadCount.getValue(), new ProgressListener(){
-
 					@Override
 					public void progress(int done){
 						bar.setValue(done);
+						ptext.setText(done + "/" + total);
+						progress.repaint();
 					}
 
 					@Override
 					public void error(Path file, Exception error){
-						// TODO Auto-generated method stub
-						
+						errors.add(file.toString() + ": " + error.getMessage());						
 					}
 
 					@Override
 					public void done(){
-						// TODO Auto-generated method stub
+						if(!errors.isEmpty()){
+							JPanel msg = new JPanel(new BorderLayout());
+							msg.add(new JLabel("Scaling finished with " + (errors.size() == 1 ? "1 error" : (errors.size() + " errors")) + ". These files were consequently skipped:"), BorderLayout.PAGE_START);
+							msg.add(new JScrollPane(new JList<String>(errors.toArray(new String[0]))), BorderLayout.CENTER);
+							Dialog.showMessageDialog(msg);
+						}
 						
+						enableFun.accept(true);
 					}
 				});
 			}catch(IOException e1){
