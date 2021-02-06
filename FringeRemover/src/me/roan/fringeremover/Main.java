@@ -2,13 +2,11 @@ package me.roan.fringeremover;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
@@ -21,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
@@ -71,12 +68,16 @@ public class Main{
 		
 		openFile.addActionListener(e->{
 			File selected = Dialog.showFileOpenDialog(PNG_EXTENSION);
-			inputField.setText(selected == null ? null : selected.getAbsolutePath());
+			if(selected != null){
+				inputField.setText(selected.getAbsolutePath());
+			}
 		});
 		
 		openFolder.addActionListener(e->{
 			File selected = Dialog.showFolderOpenDialog();
-			inputField.setText(selected == null ? null : selected.getAbsolutePath());
+			if(selected != null){
+				inputField.setText(selected.getAbsolutePath());
+			}
 		});
 		
 		JPanel output = new JPanel(new BorderLayout());
@@ -84,9 +85,12 @@ public class Main{
 		output.add(new JLabel("Target: "), BorderLayout.LINE_START);
 		FileTextField outputField = new FileTextField();
 		output.add(outputField, BorderLayout.CENTER);
-		JButton saveLoc = new JButton("Select");
-		output.add(saveLoc, BorderLayout.LINE_END);
-		
+		JPanel saveButtons = new JPanel(new GridLayout(1, 2));
+		JButton saveFile = new JButton("File");
+		JButton saveFolder = new JButton("Folder");
+		saveButtons.add(saveFile);
+		saveButtons.add(saveFolder);
+		output.add(saveButtons, BorderLayout.LINE_END);
 		
 		//TODO only sync if not edited yet?
 		inputField.setListener(path->{
@@ -99,9 +103,18 @@ public class Main{
 			}
 		});
 		
-		saveLoc.addActionListener(e->{
+		saveFile.addActionListener(e->{
+			File selected = Dialog.showFileSaveDialog(PNG_EXTENSION, inputField.getFile().getName());
+			if(selected != null){
+				outputField.setText(selected.getAbsolutePath());
+			}
+		});
+		
+		saveFolder.addActionListener(e->{
 			File selected = Dialog.showFolderOpenDialog();
-			outputField.setText(selected == null ? null : selected.getAbsolutePath());
+			if(selected != null){
+				outputField.setText(selected.getAbsolutePath());
+			}
 		});
 		
 		JPanel options = new JPanel(new GridLayout(3, 1));
@@ -139,7 +152,8 @@ public class Main{
 			pause.setEnabled(!enabled);
 			openFile.setEnabled(enabled);
 			openFolder.setEnabled(enabled);
-			saveLoc.setEnabled(enabled);
+			saveFile.setEnabled(enabled);
+			saveFolder.setEnabled(enabled);
 			parseSubDir.setEnabled(enabled);
 			overwrite.setEnabled(enabled);
 		};
@@ -151,9 +165,10 @@ public class Main{
 			Path inputPath = inputField.getFile().toPath();
 			Path outputPath = outputField.getFile().toPath();
 			
-			//TODO handle output being a file?
-			
-			
+			if(Files.isRegularFile(outputPath) && Files.isDirectory(inputPath)){
+				Dialog.showMessageDialog("Cannot save a folder of files to a single output file.");
+				return;
+			}
 			
 			try{
 				int total = Worker.prepare(inputPath, outputPath, parseSubDir.isSelected(), overwrite.isSelected());
@@ -161,7 +176,7 @@ public class Main{
 				bar.setValue(0);
 				
 				//TODO make threads configurable
-				Worker.start(4, new ProgressListener(){
+				Worker.start((int)threadCount.getValue(), new ProgressListener(){
 
 					@Override
 					public void progress(int done){

@@ -82,7 +82,7 @@ public class Worker{
 	}
 	
 	private static final void processFile(Path file) throws IOException{
-		Path target =  outputDir.resolve(inputDir.relativize(file));
+		Path target = Files.isDirectory(outputDir) ? outputDir.resolve(inputDir.relativize(file)) : outputDir;
 		if(overwrite || !Files.exists(target)){
 			System.out.println("process: " + file);
 			BufferedImage img = ImageIO.read(file.toFile());
