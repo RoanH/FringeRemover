@@ -49,7 +49,7 @@ application{
 
 launch4j{
 	mainClassName = application.mainClassName
-	//icon = "${projectDir}/fringeremover.ico"
+	icon = "${projectDir}/fringeremover.ico"
 	jreMinVersion = project.sourceCompatibility
 	outfile = project.name + '-' + project.version + '.exe'
 	fileDescription = project.name

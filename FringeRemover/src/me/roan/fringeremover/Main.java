@@ -2,6 +2,7 @@ package me.roan.fringeremover;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -44,15 +45,14 @@ public class Main{
 		JFrame frame = new JFrame("Fringe Remover");
 		Dialog.setDialogTitle("Fringe Remover");
 		Dialog.setParentFrame(frame);
-		//TODO set icon
 		try{
+			Image small = ImageIO.read(ClassLoader.getSystemResourceAsStream("icon_small.png"));
+			Dialog.setDialogIcon(small);
 			frame.setIconImages(Arrays.asList(
-				ImageIO.read(new File("C:\\Users\\RoanH\\Downloads\\Downloads\\text_shapes64.png")),
-				ImageIO.read(new File("C:\\Users\\RoanH\\Downloads\\Downloads\\text_shapes24simple.png"))
+				ImageIO.read(ClassLoader.getSystemResourceAsStream("icon.png")),
+				small
 			));
 		}catch(IOException e1){
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
 		
 		JPanel panel = new JPanel();
