@@ -87,7 +87,7 @@ public class Worker{
 		if(overwrite || !Files.exists(target)){
 			System.out.println("process: " + file);
 			BufferedImage img = ImageIO.read(file.toFile());
-			Files.createDirectories(target);
+			Files.createDirectories(target.getParent());
 			processImage(img, target.toFile());
 			img.flush();
 		}else{
