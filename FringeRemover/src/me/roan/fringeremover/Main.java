@@ -35,9 +35,21 @@ import me.roan.util.FileSelector.FileExtension;
 import me.roan.util.FileTextField;
 import me.roan.util.Util;
 
+/**
+ * Program used to alter the color of fully transparent
+ * pixels to improve the result of OpenGL image rendering.
+ * @author Roan
+ */
 public class Main{
+	/**
+	 * File chooser extension filter that allows only PNG files.
+	 */
 	private static final FileExtension PNG_EXTENSION = FileSelector.registerFileExtension("PNG", "png");
 	
+	/**
+	 * Starts the program and shows the GUI.
+	 * @param args No valid command line arguments.
+	 */
 	public static void main(String[] args){
 		Util.installUI();
 		
@@ -95,6 +107,10 @@ public class Main{
 		saveButtons.add(saveFolder);
 		output.add(saveButtons, BorderLayout.LINE_END);
 		
+		inputField.setListener(path->{
+			outputField.setText(path);
+		});
+		
 		saveFile.addActionListener(e->{
 			File selected = Dialog.showFileSaveDialog(PNG_EXTENSION, inputField.getFile().getName());
 			if(selected != null){
@@ -111,7 +127,7 @@ public class Main{
 		
 		JPanel options = new JPanel(new GridLayout(3, 1));
 		options.setBorder(BorderFactory.createTitledBorder("Options"));
-		JCheckBox parseSubDir = new JCheckBox("Parse subdirectories", true);//TODO disable if input is file
+		JCheckBox parseSubDir = new JCheckBox("Parse subdirectories", true);
 		options.add(parseSubDir);
 		JCheckBox overwrite = new JCheckBox("Overwrite existing files", false);
 		options.add(overwrite);
@@ -121,10 +137,6 @@ public class Main{
 		JSpinner threadCount = new JSpinner(new SpinnerNumberModel(Math.min(4, maxThreads), 1, maxThreads, 1));
 		threadsPanel.add(threadCount, BorderLayout.CENTER);
 		options.add(threadsPanel);
-		
-		inputField.setListener(path->{
-			outputField.setText(path);
-		});
 		
 		JPanel progress = new JPanel(new BorderLayout());
 		progress.setBorder(BorderFactory.createTitledBorder("Progress"));
@@ -173,7 +185,6 @@ public class Main{
 			Path outputPath = outputField.getFile().toPath();
 			
 			if(Files.isRegularFile(outputPath) && Files.isDirectory(inputPath)){
-				System.out.println("st");
 				Dialog.showMessageDialog("Cannot save a folder of files to a single output file.");
 				enableFun.accept(true);
 				return;

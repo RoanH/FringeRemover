@@ -18,14 +18,45 @@ import javax.imageio.ImageIO;
 
 import me.roan.util.Dialog;
 
+/**
+ * Worker class responsible for processing all the files.
+ * @author Roan
+ */
 public class Worker{
+	/**
+	 * Path filter that only matches PNG files.
+	 */
 	private static final PathMatcher PNG_PATTERN = FileSystems.getDefault().getPathMatcher("glob:*.png");
+	/**
+	 * Input directory.
+	 */
 	private static Path inputDir;
+	/**
+	 * Output directory or file.
+	 */
 	private static Path outputDir;
+	/**
+	 * Whether to overwrite existing files.
+	 */
 	private static boolean overwrite;
+	/**
+	 * List of files to process.
+	 */
 	private static List<Path> files = new ArrayList<Path>();
+	/**
+	 * Whether working threads are currently processing files.
+	 */
 	private static volatile boolean running = false;
 	
+	/**
+	 * Prepares all the files to process based on the given input.
+	 * @param input Input folder or file.
+	 * @param output Output folder or file.
+	 * @param subdirs Whether to parse sub-directories.
+	 * @param overwriteFiles Whether to overwrite existing files.
+	 * @return The number of files that were found for processing.
+	 * @throws IOException When an IOException occurs.
+	 */
 	public static final int prepare(Path input, Path output, boolean subdirs, boolean overwriteFiles) throws IOException{
 		files.clear();
 		if(Files.isRegularFile(input, LinkOption.NOFOLLOW_LINKS)){
@@ -46,14 +77,28 @@ public class Worker{
 		return files.size();
 	}
 	
+	/**
+	 * Sets whether the working is currently processing files.
+	 * @param shouldRun True if the worker should process files.
+	 */
 	public static final void setRunning(boolean shouldRun){
 		running = shouldRun;
 	}
 	
+	/**
+	 * Checks if the worker is currently running and processing files.
+	 * @return True if the worker is currently processing files.
+	 */
 	public static boolean isRunning(){
 		return running;
 	}
 	
+	/**
+	 * Starts the worker with the give number of concurrent threads
+	 * and listener to report progress updates to.
+	 * @param threads The number of concurrent threads to use.
+	 * @param listener The progress listener.
+	 */
 	public static final void start(int threads, ProgressListener listener){
 		ExecutorService executor = Executors.newFixedThreadPool(threads);
 		AtomicInteger completed = new AtomicInteger(0);
@@ -94,10 +139,17 @@ public class Worker{
 		}
 	}
 	
+	/**
+	 * Processes the given file.
+	 * @param file The file to process.
+	 * @return True if the file was successfully processed,
+	 *         false if the file already exists and overwriting
+	 *         is not enabled.
+	 * @throws IOException When an IOException occurs.
+	 */
 	private static final boolean processFile(Path file) throws IOException{
 		Path target = Files.isDirectory(outputDir) ? outputDir.resolve(inputDir.relativize(file)) : outputDir;
 		if(overwrite || !Files.exists(target)){
-			System.out.println("process: " + file);
 			BufferedImage img = ImageIO.read(file.toFile());
 			Files.createDirectories(target.getParent());
 			processImage(img, target.toFile());
@@ -108,6 +160,12 @@ public class Worker{
 		}
 	}
 
+	/**
+	 * Processes the given image and writes it to the given file.
+	 * @param input The image to process.
+	 * @param output The output file to write to.
+	 * @throws IOException When an IOException occurs.
+	 */
 	private static final void processImage(BufferedImage input, File output) throws IOException{
 		BufferedImage copy = new BufferedImage(input.getWidth(), input.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
@@ -168,9 +226,28 @@ public class Worker{
 		return argb;
 	}
 	
+	/**
+	 * Listener that subscribes to worker progress events.
+	 * @author Roan
+	 */
 	public static abstract interface ProgressListener{
+		
+		/**
+		 * Called when a file has finished processing.
+		 * @param done The total number of files that have finished processing.
+		 */
 		public abstract void progress(int done);
+		
+		/**
+		 * Called when some error occurred.
+		 * @param file The file that caused the error.
+		 * @param error The error message.
+		 */
 		public abstract void error(Path file, String error);
+		
+		/**
+		 * Called when all files have finished processing.
+		 */
 		public abstract void done();
 	}
 }
