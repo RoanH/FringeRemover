@@ -96,7 +96,6 @@ public class Main{
 		saveButtons.add(saveFolder);
 		output.add(saveButtons, BorderLayout.LINE_END);
 		
-		//TODO only sync if not edited yet?
 		inputField.setListener(path->{
 			outputField.setText(path);
 		});
@@ -193,8 +192,8 @@ public class Main{
 					}
 
 					@Override
-					public void error(Path file, Exception error){
-						errors.add(file.toString() + ": " + error.getMessage());						
+					public void error(Path file, String error){
+						errors.add(file.toString() + ": " + error);						
 					}
 
 					@Override

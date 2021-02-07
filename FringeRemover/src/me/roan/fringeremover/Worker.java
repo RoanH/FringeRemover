@@ -3,7 +3,6 @@ package me.roan.fringeremover;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -62,10 +61,14 @@ public class Worker{
 				}
 				
 				try{
-					processFile(file);
+					if(!processFile(file)){
+						synchronized(listener){
+							listener.error(file, "Target file already exists and overwriting is disabled.");
+						}
+					}
 				}catch(Exception e){
 					synchronized(listener){
-						listener.error(file, e);
+						listener.error(file, e.getMessage());
 					}
 					e.printStackTrace();
 				}finally{
@@ -82,7 +85,7 @@ public class Worker{
 		}
 	}
 	
-	private static final void processFile(Path file) throws IOException{
+	private static final boolean processFile(Path file) throws IOException{
 		Path target = Files.isDirectory(outputDir) ? outputDir.resolve(inputDir.relativize(file)) : outputDir;
 		if(overwrite || !Files.exists(target)){
 			System.out.println("process: " + file);
@@ -90,8 +93,9 @@ public class Worker{
 			Files.createDirectories(target.getParent());
 			processImage(img, target.toFile());
 			img.flush();
+			return true;
 		}else{
-			throw new IllegalArgumentException("File already exists and overwrite not enabled.");
+			return false;
 		}
 	}
 
@@ -157,7 +161,7 @@ public class Worker{
 	
 	public static abstract interface ProgressListener{
 		public abstract void progress(int done);
-		public abstract void error(Path file, Exception error);
+		public abstract void error(Path file, String error);
 		public abstract void done();
 	}
 }
