@@ -16,6 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
 
+import me.roan.util.Dialog;
+
 public class Worker{
 	private static final PathMatcher PNG_PATTERN = FileSystems.getDefault().getPathMatcher("glob:*.png");
 	private static Path inputDir;
@@ -30,6 +32,8 @@ public class Worker{
 			inputDir = input.getParent();
 			if(PNG_PATTERN.matches(input.getFileName())){
 				files.add(input);
+			}else{
+				Dialog.showErrorDialog("Input file is not a PNG file.");
 			}
 		}else{
 			inputDir = input;
@@ -44,6 +48,10 @@ public class Worker{
 	
 	public static final void setRunning(boolean shouldRun){
 		running = shouldRun;
+	}
+	
+	public static boolean isRunning(){
+		return running;
 	}
 	
 	public static final void start(int threads, ProgressListener listener){
@@ -78,6 +86,7 @@ public class Worker{
 						if(finished == files.size()){
 							listener.done();
 							executor.shutdown();
+							running = false;
 						}
 					}
 				}

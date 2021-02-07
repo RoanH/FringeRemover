@@ -37,7 +37,6 @@ import me.roan.util.Util;
 
 public class Main{
 	private static final FileExtension PNG_EXTENSION = FileSelector.registerFileExtension("PNG", "png");
-	private static Worker worker = null;
 	
 	public static void main(String[] args){
 		Util.installUI();
@@ -96,10 +95,6 @@ public class Main{
 		saveButtons.add(saveFolder);
 		output.add(saveButtons, BorderLayout.LINE_END);
 		
-		inputField.setListener(path->{
-			outputField.setText(path);
-		});
-		
 		saveFile.addActionListener(e->{
 			File selected = Dialog.showFileSaveDialog(PNG_EXTENSION, inputField.getFile().getName());
 			if(selected != null){
@@ -118,7 +113,7 @@ public class Main{
 		options.setBorder(BorderFactory.createTitledBorder("Options"));
 		JCheckBox parseSubDir = new JCheckBox("Parse subdirectories", true);//TODO disable if input is file
 		options.add(parseSubDir);
-		JCheckBox overwrite = new JCheckBox("Overwrite existing files", false);//TODO default value
+		JCheckBox overwrite = new JCheckBox("Overwrite existing files", false);
 		options.add(overwrite);
 		JPanel threadsPanel = new JPanel(new BorderLayout());
 		threadsPanel.add(new JLabel("Threads: "), BorderLayout.LINE_START);
@@ -126,6 +121,10 @@ public class Main{
 		JSpinner threadCount = new JSpinner(new SpinnerNumberModel(Math.min(4, maxThreads), 1, maxThreads, 1));
 		threadsPanel.add(threadCount, BorderLayout.CENTER);
 		options.add(threadsPanel);
+		
+		inputField.setListener(path->{
+			outputField.setText(path);
+		});
 		
 		JPanel progress = new JPanel(new BorderLayout());
 		progress.setBorder(BorderFactory.createTitledBorder("Progress"));
@@ -157,6 +156,16 @@ public class Main{
 		};
 		enableFun.accept(true);
 		
+		pause.addActionListener((e)->{
+			if(Worker.isRunning()){
+				Worker.setRunning(false);
+				pause.setText("Resume");
+			}else{
+				Worker.setRunning(true);
+				pause.setText("Pause");
+			}
+		});
+		
 		start.addActionListener(e->{
 			enableFun.accept(false);
 			
@@ -173,7 +182,7 @@ public class Main{
 			try{
 				int total = Worker.prepare(inputPath, outputPath, parseSubDir.isSelected(), overwrite.isSelected());
 				if(total == 0){
-					ptext.setText("No files to rescale");
+					ptext.setText("No files to process");
 					bar.setMaximum(1);
 					bar.setValue(1);
 					enableFun.accept(true);
@@ -206,11 +215,12 @@ public class Main{
 						}
 						
 						enableFun.accept(true);
+						pause.setText("Pause");
 					}
 				});
 			}catch(IOException e1){
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				Dialog.showErrorDialog("An internal error occurred:\nCause: " + e1.getMessage());
 			}
 		});
 		
