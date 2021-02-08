@@ -24,7 +24,15 @@ I hope that this program is useful to some of you :)<br>
 If you find any bugs feel free to report them.
 
 ## More detailed explanation from RockRoller
-...
+Commonly when skinning you will notice how an image may be surrounded by a slight white border aka fringe that you didn't put there. These are just not very pleasant to look at and are a pain to deal with.
+
+These happen because the transparent parts of your image are actually white at 100% transparency (255, 255, 255, 0). (Small disclaimer: I do not know the exact technicalities, but how to solve them and roughly why they happen.) 
+
+In rendering the client averages neighboring pixels for scaling/anti aliasing and it does not ignore pixels with alpha = 0, therefore averaging your coloured pixel and fully transparent white, leading to a mixture of the them, which usually ends with lightening your colour and therefore producing a fringe. (this is also why its not noticeable on bright/white elements)
+
+The fix to this was to set all alpha = 0 pixels to black, which can be done easily, however gets tedious when you need to do it for dozen or hundreds of files. This is where this program comes in. It does this for you. (technically it does it even better and should clamp the image, but that probably doesn't matter to you) 
+
+Just make a copy of your skins (its always good to make a backup before potentially messing up your skin with some mass edit), select the skin, select the same folder for the output, check "Overwrite existing files" and hit start, once its done all white fringes on your skin should be done. 
 
 ## Downloads
 _Requires Java 8 or higher_    
