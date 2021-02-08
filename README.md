@@ -11,7 +11,7 @@ The program looks like this:<br>
 
 The program can either process individual files or you can process a whole folder at the same time. Furthermore, although I've done extensive testing I recommend that you always make a backup before running the program on your skin, just in case something goes wrong. It's also worth noting that only PNG files will be processed by this program.
 
-To further highly exactly what this program does I've put together a simple example. The image is just a black circle with no antialising we'll use it as a mod icon.    
+To further highly exactly what this program does I've put together a simple example. The image is just a black circle with no anti-aliasing we'll use it as a mod icon.    
 ![Original](https://i.imgur.com/ZcqOnst.png)
 
 If we now load our skin in osu! we will see the following result on the mod selection screen:    
