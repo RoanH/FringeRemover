@@ -33,5 +33,7 @@ All releases: [releases](https://github.com/RoanH/FringeRemover/releases)<br>
 GitHub repository: [repository](https://github.com/RoanH/FringeRemover)<br>
 Forum post: [post]()
 
+Program icon by: [RockRoller](https://osu.ppy.sh/users/8388854)
+
 ## History
 Project development started: 18th of January, 2021.
