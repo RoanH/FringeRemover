@@ -41,7 +41,7 @@ _Requires Java 8 or higher_
 
 All releases: [releases](https://github.com/RoanH/FringeRemover/releases)<br>
 GitHub repository: [repository](https://github.com/RoanH/FringeRemover)<br>
-Forum post: [post]()
+Forum post: [post](https://osu.ppy.sh/community/forums/topics/1244643)
 
 Program icon by: [RockRoller](https://osu.ppy.sh/users/8388854)
 

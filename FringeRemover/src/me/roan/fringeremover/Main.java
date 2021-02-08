@@ -240,7 +240,7 @@ public class Main{
 		links.add(git);
 		version.add(links);
 		version.add(Util.getVersionLabel("FringeRemover", "v1.0"));//XXX the version number - don't forget build.gradle
-		//TODO forum.addMouseListener(new ClickableLink("https://osu.ppy.sh/community/forums/topics/xxxxxx"));
+		forum.addMouseListener(new ClickableLink("https://osu.ppy.sh/community/forums/topics/1244643"));
 		git.addMouseListener(new ClickableLink("https://github.com/RoanH/FringeRemover"));
 		
 		panel.add(input);
