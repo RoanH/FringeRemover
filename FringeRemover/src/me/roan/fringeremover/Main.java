@@ -216,7 +216,7 @@ public class Main{
 					public void done(){
 						if(!errors.isEmpty()){
 							JPanel msg = new JPanel(new BorderLayout());
-							msg.add(new JLabel("Scaling finished with " + (errors.size() == 1 ? "1 error" : (errors.size() + " errors")) + ". These files were consequently skipped:"), BorderLayout.PAGE_START);
+							msg.add(new JLabel("Processing finished with " + (errors.size() == 1 ? "1 error" : (errors.size() + " errors")) + ". These files were consequently skipped:"), BorderLayout.PAGE_START);
 							msg.add(new JScrollPane(new JList<String>(errors.toArray(new String[0]))), BorderLayout.CENTER);
 							Dialog.showMessageDialog(msg);
 						}
