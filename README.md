@@ -1,13 +1,15 @@
 # Fringe Remover ![](https://img.shields.io/github/release/RoanH/FringeRemover.svg) ![](https://img.shields.io/github/downloads/RoanH/FringeRemover/total.svg)
 Program to make images not get weird white fringes when rendered in osu!. Might work as well for other games or OpenGL applications that render images at different sizes.
 
+[Jump directly to downloads](#downloads)
+
 # Forum post
 A little while ago I was asked by [RockRoller](https://osu.ppy.sh/users/8388854) to write a program to address a common skinning issue where a white fringe appears around skin elements. If you make your own osu! skins and this issue sounds familiar then this program might be of use to you. I've also asked RockRoller to post a more detailed comment to this thread explaining why and when you might want to use this program.
 
 The program looks like this:<br>
 ![GUI](https://i.imgur.com/AvLVcFa.png)
 
-The program can either process individual files or you can process a whole folder at the same time. Furthermore, although I've done extensive testing I recommend that you always make a backup before running the program on your skin, just in case something goes wrong.
+The program can either process individual files or you can process a whole folder at the same time. Furthermore, although I've done extensive testing I recommend that you always make a backup before running the program on your skin, just in case something goes wrong. It's also worth noting that only PNG files will be processed by this program.
 
 To further highly exactly what this program does I've put together a simple example. The image is just a black circle with no antialising we'll use it as a mod icon.    
 ![Original](https://i.imgur.com/ZcqOnst.png)
