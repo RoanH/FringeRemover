@@ -107,10 +107,6 @@ public class Main{
 		saveButtons.add(saveFolder);
 		output.add(saveButtons, BorderLayout.LINE_END);
 		
-		inputField.setListener(path->{
-			outputField.setText(path);
-		});
-		
 		saveFile.addActionListener(e->{
 			File selected = Dialog.showFileSaveDialog(PNG_EXTENSION, inputField.getFile().getName());
 			if(selected != null){
