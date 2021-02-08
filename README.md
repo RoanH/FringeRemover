@@ -2,7 +2,7 @@
 Program to make images not get weird white fringes when rendered in osu!. Might work as well for other games or OpenGL applications that render images at different sizes.
 
 # Forum post
-A little while ago I was asked by [RockRoller](https://osu.ppy.sh/users/8388854) to write a program to adds a common skinning issue where a white fringe appears around certain skin elements. If you make your own osu! skins and this issue sounds familiar then this program might be of use to you. I've also asked RockRoller to post a more detailed comment to this thread explaining why and when you might want to use this program.
+A little while ago I was asked by [RockRoller](https://osu.ppy.sh/users/8388854) to write a program to address a common skinning issue where a white fringe appears around skin elements. If you make your own osu! skins and this issue sounds familiar then this program might be of use to you. I've also asked RockRoller to post a more detailed comment to this thread explaining why and when you might want to use this program.
 
 The program looks like this:<br>
 ![GUI](https://i.imgur.com/AvLVcFa.png)
