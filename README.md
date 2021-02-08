@@ -9,6 +9,15 @@ The program looks like this:<br>
 
 The program can either process individual files or you can process a whole folder at the same time. Furthermore, although I've done extensive testing I recommend that you always make a backup before running the program on your skin, just in case something goes wrong.
 
+To further highly exactly what this program does I've put together a simple example. The image is just a black circle with no antialising we'll use it as a mod icon.    
+![Original](https://i.imgur.com/ZcqOnst.png)
+
+If we now load our skin in osu! we will see the following result on the mod selection screen:    
+![Result](https://i.imgur.com/1NcQ7g4.png)
+
+Even though there was no white at all in the original image, we have white fringes around the circle. If we now run FringeRemover on this image and check again we end up with the following, expected result:
+![Fixed](https://i.imgur.com/M3ThzDd.png)
+
 I hope that this program is useful to some of you :)<br>
 If you find any bugs feel free to report them.
 
