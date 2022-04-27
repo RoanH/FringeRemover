@@ -1,4 +1,4 @@
-# Fringe Remover ![](https://img.shields.io/github/release/RoanH/FringeRemover.svg) ![](https://img.shields.io/github/downloads/RoanH/FringeRemover/total.svg)
+# <img src="FringeRemover/src/icon.png" width="40"/> Fringe Remover [![](https://img.shields.io/github/release/RoanH/FringeRemover.svg)](https://github.com/RoanH/FringeRemover/releases) [![](https://img.shields.io/github/downloads/RoanH/FringeRemover/total.svg)](#downloads)
 Program to make images not get weird white fringes when rendered in osu!. Might work as well for other games or OpenGL applications that render images at different sizes.
 
 [Jump directly to downloads](#downloads)
