@@ -7,18 +7,18 @@ Program to make images not get weird white fringes when rendered in osu!. Might 
 A little while ago I was asked by [RockRoller](https://osu.ppy.sh/users/8388854) to write a program to address a common skinning issue where a white fringe appears around skin elements. If you make your own osu! skins and this issue sounds familiar then this program might be of use to you. I've also asked RockRoller to post a more detailed comment to this thread explaining why and when you might want to use this program.
 
 The program looks like this:<br>
-![GUI](https://i.imgur.com/AvLVcFa.png)
+![GUI](https://media.roanh.dev/fringeremover/gui.png)
 
 The program can either process individual files or you can process a whole folder at the same time. Furthermore, although I've done extensive testing I recommend that you always make a backup before running the program on your skin, just in case something goes wrong. It's also worth noting that only PNG files will be processed by this program.
 
 To further highly exactly what this program does I've put together a simple example. The image is just a black circle with no anti-aliasing we'll use it as a mod icon.    
-![Original](https://i.imgur.com/ZcqOnst.png)
+![Original](https://media.roanh.dev/fringeremover/ex1.png)
 
 If we now load our skin in osu! we will see the following result on the mod selection screen:    
-![Result](https://i.imgur.com/1NcQ7g4.png)
+![Result](https://media.roanh.dev/fringeremover/ex2.png)
 
 Even though there was no white at all in the original image, we have white fringes around the circle. If we now run FringeRemover on this image and check again we end up with the following, expected result:    
-![Fixed](https://i.imgur.com/M3ThzDd.png)
+![Fixed](https://media.roanh.dev/fringeremover/ex3.png)
 
 I hope that this program is useful to some of you :)<br>
 If you find any bugs feel free to report them.
